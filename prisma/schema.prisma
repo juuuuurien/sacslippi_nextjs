@@ -1,0 +1,53 @@
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Player {
+  id                     String                @id @default(uuid())
+  playerTag              String                @db.VarChar(255)
+  slippiTag              String?               @db.VarChar(255)
+  connectCode            String?               @unique
+  approved               Boolean               @default(false)
+  currentRank            Int?                  @default(0)
+  pastRank               Int?                  @default(0)
+  ranksChanged           Int?                  @default(0)
+  wins                   Int?                  @default(0)
+  losses                 Int?                  @default(0)
+  currentRating          Float?                @default(0.0)
+  pastRating             Float?                @default(0.0)
+  ratingChanged          Float?                @default(0.0)
+  dailyGlobalPlacement   Int?                  @default(0)
+  dailyRegionalPlacement Int?                  @default(0)
+  characters             CharactersOnPlayers[]
+  isDeleted              Boolean               @default(false)
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+}
+
+model Character {
+  id        String                @unique @db.VarChar(255)
+  name      String                @unique @db.VarChar(255)
+  players   CharactersOnPlayers[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+}
+
+model CharactersOnPlayers {
+  id          String    @id @default(uuid())
+  player      Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId    String
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  characterId String
+  gameCount   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
+  @@index([characterId])
+  @@index([playerId])
+}
