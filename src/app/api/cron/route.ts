@@ -64,6 +64,7 @@ async function handlePlayerUpdate(slippiData: SlippiPlayerData) {
       });
 
       if (char.gameCount === charOnPlayer?.gameCount) {
+        console.log(`Skipping ${char}`);
         continue;
       }
 

@@ -78,6 +78,7 @@ const PlayerTable = () => {
 
     let channel = pusher.subscribe("sync-player-data");
     channel.bind("sync-event", function (data: any) {
+      console.log("Sync event detected... ", data);
       if (data.message === "Ending sync...") {
         setIsSyncing(false);
         queryClient.invalidateQueries(["playerData"]);
