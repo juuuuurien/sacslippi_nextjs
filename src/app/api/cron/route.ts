@@ -63,6 +63,10 @@ async function handlePlayerUpdate(slippiData: SlippiPlayerData) {
         },
       });
 
+      if (char.gameCount === charOnPlayer?.gameCount) {
+        continue;
+      }
+
       if (charOnPlayer) {
         await prisma.charactersOnPlayers.update({
           where: {
