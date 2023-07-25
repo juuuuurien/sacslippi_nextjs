@@ -36,11 +36,9 @@ async function handlePlayerUpdate(slippiData: SlippiPlayerData) {
       },
       data: {
         slippiTag: displayName,
-        pastRank: player.currentRank,
         wins: wins,
         losses: losses,
         currentRating: parseFloat(ratingOrdinal),
-        pastRating: player.currentRating,
         dailyGlobalPlacement: dailyGlobalPlacement,
         dailyRegionalPlacement: dailyRegionalPlacement,
       },
