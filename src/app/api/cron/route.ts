@@ -18,7 +18,6 @@ async function handlePlayerUpdate(slippiData: SlippiPlayerData) {
       characters,
     } = slippiData.getConnectCode.user.rankedNetplayProfile;
 
-    console.log("Updating player...");
     const player = await prisma.player.findUnique({
       where: {
         connectCode: connectCode,
@@ -30,20 +29,33 @@ async function handlePlayerUpdate(slippiData: SlippiPlayerData) {
       return;
     }
 
-    const updatedPlayer = await prisma.player.update({
-      where: {
-        id: player?.id,
-      },
-      data: {
-        slippiTag: displayName,
-        wins: wins,
-        losses: losses,
-        currentRating: parseFloat(ratingOrdinal),
-        dailyGlobalPlacement: dailyGlobalPlacement,
-        dailyRegionalPlacement: dailyRegionalPlacement,
-      },
-    });
-    console.log("Done.");
+    // Determine if an update is needed.
+    if (
+      player.slippiTag !== displayName ||
+      player.wins !== wins ||
+      player.losses !== losses ||
+      player.currentRating !== parseFloat(ratingOrdinal) ||
+      player.dailyGlobalPlacement !== dailyGlobalPlacement ||
+      player.dailyRegionalPlacement !== dailyRegionalPlacement
+    ) {
+      console.log("Updating player...");
+      const updatedPlayer = await prisma.player.update({
+        where: {
+          id: player?.id,
+        },
+        data: {
+          slippiTag: displayName,
+          wins: wins,
+          losses: losses,
+          currentRating: parseFloat(ratingOrdinal),
+          dailyGlobalPlacement: dailyGlobalPlacement,
+          dailyRegionalPlacement: dailyRegionalPlacement,
+        },
+      });
+      console.log("Done.");
+    } else {
+      console.log("No changes detected. Skipping player. " + connectCode);
+    }
 
     console.log("Updating Characters...");
     // Update gamecounts for player's characters.
@@ -62,7 +74,7 @@ async function handlePlayerUpdate(slippiData: SlippiPlayerData) {
       });
 
       if (char.gameCount === charOnPlayer?.gameCount) {
-        console.log(`Skipping ${char}`);
+        console.log(`Skipping ${char.character}`);
         continue;
       }
 
