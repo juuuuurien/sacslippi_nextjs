@@ -73,12 +73,12 @@ async function handlePlayerUpdate(slippiData: SlippiPlayerData) {
         },
       });
 
-      if (char.gameCount === charOnPlayer?.gameCount) {
-        console.log(`Skipping ${char.character}`);
-        continue;
-      }
-
       if (charOnPlayer) {
+        if (char.gameCount === charOnPlayer?.gameCount) {
+          console.log(`Skipping ${char.character}`);
+          continue;
+        }
+
         await prisma.charactersOnPlayers.update({
           where: {
             id: charOnPlayer.id,
